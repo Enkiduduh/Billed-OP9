@@ -164,8 +164,8 @@ describe("Given that I am a user on login page", () => {
       const inputData = {
         type: "Admin",
         email: "johndoe@email.com",
-        password: "azerty",
-        status: "connected",
+        password: "azerty"
+        // status: "connected",
       };
 
       const inputEmailUser = screen.getByTestId("admin-email-input");
