@@ -15,15 +15,40 @@ export default class NewBill {
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
   }
-  handleChangeFile = e => {
-    e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
+
+  handleChangeFile = (e) => {
+    e.preventDefault();
+    const file = this.document.querySelector(`input[data-testid="file"]`)
+      .files[0];
+    console.log('file', file);
+    const filePath = e.target.value.split(/\\/g);
+    const fileName = filePath[filePath.length - 1];
+
+    const fileExtension = fileName.split('.').pop();
+    console.log('fileExtension', fileExtension);
+
+    // Tableau des extensions autorisées
+    const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+    // Vérifier si l'extension n'est pas autorisée
+    if (!allowedExtensions.includes(fileExtension.toLowerCase())) {
+      // Désactiver le bouton de soumission du formulaire
+      const submitButton = this.document.querySelector(`button[type="submit"]`);
+      submitButton.disabled = true;
+      alert(
+        "Les formats de fichiers autorisés pour le justificatif sont les suivants : 'jpg', 'jpeg', 'png' "
+      );
+      return;
+    }
+    // Si l'extension est valide, réactiver le bouton de soumission s'il était désactivé
+    const submitButton = this.document.querySelector(`button[type="submit"]`);
+    submitButton.disabled = false;
+
+    const formData = new FormData();
+
+    const email = JSON.parse(localStorage.getItem('user')).email;
+    formData.append('file', file);
+    formData.append('email', email);
 
     this.store
       .bills()
@@ -33,13 +58,15 @@ export default class NewBill {
           noContentType: true
         }
       })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
-  }
+      .then(({ fileUrl, key }) => {
+        console.log(fileUrl);
+        this.billId = key;
+        this.fileUrl = fileUrl;
+        this.fileName = fileName;
+      })
+      .catch((error) => console.error(error));
+  };
+  
   handleSubmit = e => {
     e.preventDefault()
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)

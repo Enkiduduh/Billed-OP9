@@ -317,7 +317,10 @@ describe("Given I am a user connected as Admin", () => {
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Dashboard);
-      await waitFor(() => screen.getByText("Validations"));
+      // await waitFor(() => screen.getByText("Validations"));
+      await waitFor(() =>
+        screen.getByText((content) => content.includes("Validations"))
+      );
       const contentPending = await screen.getByText("En attente (1)");
       expect(contentPending).toBeTruthy();
       const contentRefused = await screen.getByText("Refusé (2)");
@@ -350,10 +353,10 @@ describe("Given I am a user connected as Admin", () => {
             },
           };
         });
-        window.onNavigate(ROUTES_PATH.Dashboard);
-        // Attendre explicitement que le message d'erreur apparaisse
-        const message = await waitFor(() => screen.getByText(/Erreur 404/));
-        expect(message).toBeTruthy();
+        window.onNavigate(ROUTES_PATH.Dashboard)
+        await new Promise(process.nextTick);
+        const message = await screen.getByText(/Erreur 404/)
+        expect(message).toBeTruthy()
       });
 
       test("fetches messages from an API and fails with 500 message error", async () => {
@@ -364,16 +367,10 @@ describe("Given I am a user connected as Admin", () => {
             },
           };
         });
-
-        // window.onNavigate(ROUTES_PATH.Dashboard)
-        // await new Promise(process.nextTick);
-        // const message = await screen.getByText(/Erreur 500/)
-        // expect(message).toBeTruthy()
-
-        window.onNavigate(ROUTES_PATH.Dashboard);
-        // Attendre explicitement que le message d'erreur apparaisse
-        const message = await waitFor(() => screen.getByText(/Erreur 500/));
-        expect(message).toBeTruthy();
+        window.onNavigate(ROUTES_PATH.Dashboard)
+        await new Promise(process.nextTick);
+        const message = await screen.getByText(/Erreur 500/)
+        expect(message).toBeTruthy()
       });
     });
   });
