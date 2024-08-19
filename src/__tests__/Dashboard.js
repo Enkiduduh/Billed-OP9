@@ -317,7 +317,6 @@ describe("Given I am a user connected as Admin", () => {
       document.body.append(root);
       router();
       window.onNavigate(ROUTES_PATH.Dashboard);
-      // await waitFor(() => screen.getByText("Validations"));
       await waitFor(() =>
         screen.getByText((content) => content.includes("Validations"))
       );
