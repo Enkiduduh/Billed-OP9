@@ -8,14 +8,25 @@ import userEvent from "@testing-library/user-event";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
 import { ROUTES, ROUTES_PATH } from "../constants/routes";
-import router from "../app/Router.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
 import mockStore from "../__mocks__/store";
+import router from "../app/Router.js";
+
+jest.mock("../app/Store", () => mockStore);
 
 // NEWBILL
 describe("Given I am a user connected as Employee", () => {
   // Test fonctionnel => n'augmente pas le coverage global du composant
   // à préserver pour la présentation et comme exemple
+
+  beforeAll(() => {
+    jest.spyOn(window, "alert").mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   describe("When I navigate to NewBill page", () => {
     test("Then email icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, "localStorage", {
@@ -200,7 +211,7 @@ describe("Given I am a user connected as Employee", () => {
       window.onNavigate(ROUTES_PATH.NewBill); //chargement de l'écran
       const fileInput = screen.getByTestId("file");
       const submitButton = document.getElementById("btn-send-bill");
-      console.log("submitButton", submitButton);
+      // console.log("submitButton", submitButton);
       const alertMock = jest.spyOn(window, "alert");
       userEvent.upload(fileInput, file);
       await waitFor(() => {
